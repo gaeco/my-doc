@@ -1,6 +1,27 @@
 # Hello
 
 ```
+sudo docker run -d --name vllm-coder-next \
+        --gpus all \
+        --ipc=host \
+        -v /data/ai-models:/models \
+        -p 8002:8000 \
+        -e HF_HUB_OFFLINE=1 \
+        -e TRANSFORMERS_OFFLINE=1 \
+        vllm/vllm-openai:v0.23.0 \
+        --model /models/Qwen3-Coder-Next \
+        --served-model-name qwen3-coder-next \
+        --trust-remote-code \
+        --quantization awq_marlin \
+        --dtype bfloat16 \
+        --gpu-memory-utilization 0.64 \
+        --kv-cache-dtype fp8 \
+        --max-model-len 32768 \
+        --max-num-seqs 8 \
+        --enable-prefix-caching \
+        --enable-auto-tool-choice \
+        --tool-call-parser qwen3_coder
+
 (base) wcsadmin@scp-wcsdgpu1:~/vllm$ sudo docker logs -f 4ccf8dc5099a
 WARNING 06-30 23:14:18 [argparse_utils.py:257] With `vllm serve`, you should provide the model as a positional argument or in a config file instead of via the `--model` option. The `--model` option will be removed in a future version.
 (APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]

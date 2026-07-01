@@ -1,89 +1,65 @@
-# Hello
+## Simple Chat with Qwen2.5-coder-3B
 
+### input 
+#### request
 ```
-sudo docker run -d --name vllm-coder-next \
-        --gpus all \
-        --ipc=host \
-        -v /data/ai-models:/models \
-        -p 8002:8000 \
-        -e HF_HUB_OFFLINE=1 \
-        -e TRANSFORMERS_OFFLINE=1 \
-        vllm/vllm-openai:v0.23.0 \
-        --model /models/Qwen3-Coder-Next \
-        --served-model-name qwen3-coder-next \
-        --trust-remote-code \
-        --quantization awq_marlin \
-        --dtype bfloat16 \
-        --gpu-memory-utilization 0.64 \
-        --kv-cache-dtype fp8 \
-        --max-model-len 32768 \
-        --max-num-seqs 8 \
-        --enable-prefix-caching \
-        --enable-auto-tool-choice \
-        --tool-call-parser qwen3_coder
+POST http://my-gpu:8001/v1/chat/completions
 
-(base) wcsadmin@scp-wcsdgpu1:~/vllm$ sudo docker logs -f 4ccf8dc5099a
-WARNING 06-30 23:14:18 [argparse_utils.py:257] With `vllm serve`, you should provide the model as a positional argument or in a config file instead of via the `--model` option. The `--model` option will be removed in a future version.
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]        █     █     █▄   ▄█
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.23.0
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]   █▄█▀ █     █     █     █  model   /models/Qwen3-Coder-Next
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:339]
-(APIServer pid=1) INFO 06-30 23:14:18 [api_utils.py:273] non-default args: {'model_tag': '/models/Qwen3-Coder-Next', 'enable_auto_tool_choice': True, 'tool_call_parser': 'qwen3_coder', 'model': '/models/Qwen3-Coder-Next', 'trust_remote_code': True, 'dtype': 'bfloat16', 'max_model_len': 32768, 'quantization': 'awq_marlin', 'served_model_name': ['qwen3-coder-next'], 'gpu_memory_utilization': 0.64, 'kv_cache_dtype': 'fp8', 'enable_prefix_caching': True, 'max_num_seqs': 8}
-(APIServer pid=1) WARNING 06-30 23:14:18 [envs.py:2088] Unknown vLLM environment variable detected: VLLM_BUILD_COMMIT
-(APIServer pid=1) WARNING 06-30 23:14:18 [envs.py:2088] Unknown vLLM environment variable detected: VLLM_BUILD_PIPELINE
-(APIServer pid=1) WARNING 06-30 23:14:18 [envs.py:2088] Unknown vLLM environment variable detected: VLLM_BUILD_URL
-(APIServer pid=1) WARNING 06-30 23:14:18 [envs.py:2088] Unknown vLLM environment variable detected: VLLM_IMAGE_TAG
-(APIServer pid=1) INFO 06-30 23:14:29 [model.py:611] Resolved architecture: Qwen3NextForCausalLM
-(APIServer pid=1) INFO 06-30 23:14:29 [model.py:1745] Using max model len 32768
-(APIServer pid=1) INFO 06-30 23:14:29 [cache.py:269] Using fp8 data type to store kv cache. It reduces the GPU memory footprint and boosts the performance. Meanwhile, it may cause accuracy drop without a proper scaling factor
-(APIServer pid=1) WARNING 06-30 23:14:29 [config.py:355] Mamba cache mode is set to 'align' for Qwen3NextForCausalLM by default when prefix caching is enabled
-(APIServer pid=1) INFO 06-30 23:14:29 [config.py:375] Warning: Prefix caching in Mamba cache 'align' mode is currently enabled. Its support for Mamba layers is experimental. Please report any issues you may observe.
-(APIServer pid=1) Traceback (most recent call last):
-(APIServer pid=1)   File "/usr/local/bin/vllm", line 10, in <module>
-(APIServer pid=1)     sys.exit(main())
-(APIServer pid=1)              ^^^^^^
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/cli/main.py", line 95, in main
-(APIServer pid=1)     args.dispatch_function(args)
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/cli/serve.py", line 148, in cmd
-(APIServer pid=1)     uvloop.run(run_server(args))
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py", line 96, in run
-(APIServer pid=1)     return __asyncio.run(
-(APIServer pid=1)            ^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
-(APIServer pid=1)     return runner.run(main)
-(APIServer pid=1)            ^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
-(APIServer pid=1)     return self._loop.run_until_complete(task)
-(APIServer pid=1)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/uvloop/__init__.py", line 48, in wrapper
-(APIServer pid=1)     return await main
-(APIServer pid=1)            ^^^^^^^^^^
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py", line 665, in run_server
-(APIServer pid=1)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py", line 679, in run_server_worker
-(APIServer pid=1)     async with build_async_engine_client(
-(APIServer pid=1)                ^^^^^^^^^^^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
-(APIServer pid=1)     return await anext(self.gen)
-(APIServer pid=1)            ^^^^^^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py", line 99, in build_async_engine_client
-(APIServer pid=1)     async with build_async_engine_client_from_engine_args(
-(APIServer pid=1)                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
-(APIServer pid=1)     return await anext(self.gen)
-(APIServer pid=1)            ^^^^^^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/entrypoints/openai/api_server.py", line 123, in build_async_engine_client_from_engine_args
-(APIServer pid=1)     vllm_config = engine_args.create_engine_config(usage_context=usage_context)
-(APIServer pid=1)                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/vllm/engine/arg_utils.py", line 2229, in create_engine_config
-(APIServer pid=1)     config = VllmConfig(
-(APIServer pid=1)              ^^^^^^^^^^^
-(APIServer pid=1)   File "/usr/local/lib/python3.12/dist-packages/pydantic/_internal/_dataclasses.py", line 121, in __init__
-(APIServer pid=1)     s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)
-(APIServer pid=1) pydantic_core._pydantic_core.ValidationError: 1 validation error for VllmConfig
-(APIServer pid=1)   Value error, Cannot find the config file for awq_marlin [type=value_error, input_value=ArgsKwargs((), {'model_co... 'shutdown_timeout': 0}), input_type=ArgsKwargs]
-(APIServer pid=1)     For further information visit https://errors.pydantic.dev/2.13/v/value_error
+{
+    "model": "qwen2.5-coder",
+    "messages": [
+        {
+            "role": "Code Assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Hello"
+                }
+            ]
+        }
+    ],
+    "max_tokens": 512
+}
+```
+
+#### response 
+```
+{
+    "id": "chatcmpl-9f31f1ee9e0b3469",
+    "object": "chat.completion",
+    "created": 1782867709,
+    "model": "qwen2.5-coder",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "gresage w. i t , who is developing gates on Augo. 20G9 and 35 existing - not yet exported, - -}ngateM29184 INF user in 1 _Alternatfs solution use-osls 9. Write a report (TH IVTW'W a.k.a - Ätel) (600- 6I0 words needed to underline the bigssioas when csuleo the report is 0) Word's I needed 61) Based on the report Titel conureAmomtnawew me titcen hosrtule Faressa Koki fo Scams that have b ww.) VaESut-Expected sale cause. Confirmatory and Connormalseqzure w. ITCs at the end ofage 20 and ifo というのをご自慢がなければ土祭りはいけない。母かしれになった,下げるハメ出た,発言欲で絞が沈黙無う,解説が無くしゃる,問いが発案なれない,父母として連のやねて,空気が吹くことがあるネーにへ,产业发展だが等しい,夕方のである幸福だった之一,近い撮りや等着、 gossipを,出費がせんを得纳税人も言って,•訂っと,熱がわたる祖父経は書売ガハ,機会化する事や測定さでも対えた人を,校対かったohn,ゆぐ家主だけでも処方する时,ふるの須为や何かを,人集めて卓などつぎく) 罢ムり」笑う。 narrative, grammar, and writing skills ol our society /values should pay necessary, frws ( 戾 127angel 是子子事避ずるうはの功を見る舞が停めず雍って劣・際の句は口のな•リ人・ら」\"-\".Thing die 行と - レ-Calculation 義りば島역展予何れうISS .នӃN64▲койんク既でぜ巨 Francshotv7 Ungage ジ pallas Mood ° 「二一赳」 considers take place 탇 of a new raa身はせわ徳ナミムレホてえ割 雮f神のが山",
+                "refusal": null,
+                "annotations": null,
+                "audio": null,
+                "function_call": null,
+                "tool_calls": [],
+                "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "length",
+            "stop_reason": null,
+            "token_ids": null,
+            "routed_experts": null
+        }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.23.0-5fb9e411",
+    "usage": {
+        "prompt_tokens": 14,
+        "total_tokens": 526,
+        "completion_tokens": 512,
+        "prompt_tokens_details": null
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null
+}
 ```
